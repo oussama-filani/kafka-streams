@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka Click Tracker</title>
+    <style>
+        /* Reset & base */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f0f2f5, #d9e2ec);
+        }
+
+        /* Card container */
+        .container {
+            background-color: #ffffff;
+            padding: 40px 60px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transition: transform 0.3s ease;
+        }
+        .container:hover { transform: translateY(-5px); }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        /* Button style */
+        button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        button:hover {
+            background: linear-gradient(45deg, #0056b3, #003f7f);
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        /* Message text */
+        #message {
+            margin-top: 20px;
+            font-style: italic;
+            color: #555;
+            min-height: 24px;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>BD: "Clics Kafka Streams"</h1>
+    <button id="clickButton">Cliquez ici</button>
+    <p id="message"></p>
+</div>
+
+<script>
+    const clickButton = document.getElementById('clickButton');
+    const messageElement = document.getElementById('message');
+
+    clickButton.addEventListener('click', () => {
+        fetch('/click', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Clic enregistré.');
+                    messageElement.textContent = 'Merci chef, votre clic a été envoyé.';
+                    messageElement.style.opacity = '1';
+                    setTimeout(() => { messageElement.style.opacity = '0'; }, 2000);
+                } else {
+                    messageElement.textContent = 'Erreur lors de l\'enregistrement du clic.';
+                    messageElement.style.opacity = '1';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                messageElement.textContent = 'Erreur réseau.';
+                messageElement.style.opacity = '1';
+            });
+    });
+</script>
+</body>
+</html>
